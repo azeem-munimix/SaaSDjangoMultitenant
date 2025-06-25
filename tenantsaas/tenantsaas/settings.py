@@ -12,9 +12,22 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-rag+joyrb9yir*@l@i5e$bao8wb!&66_04%2)oh1i40j5*6h)a')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# Reads DEBUG from the environment, defaulting to True for development.
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = []
+# Allow configuring allowed hosts via a comma separated environment variable.
+_hosts = os.environ.get('ALLOWED_HOSTS')
+if _hosts:
+    ALLOWED_HOSTS = [h.strip() for h in _hosts.split(',') if h.strip()]
+else:
+    ALLOWED_HOSTS = []
+
+# Optionally specify trusted origins for CSRF using a comma separated list.
+CSRF_TRUSTED_ORIGINS = [
+    o.strip()
+    for o in os.environ.get('CSRF_TRUSTED_ORIGINS', '').split(',')
+    if o.strip()
+]
 
 
 # Application definition

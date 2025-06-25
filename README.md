@@ -22,7 +22,11 @@ This repository contains a minimal Django project configured for multi-tenant ap
    pip install -r tenantsaas/requirements.txt
    ```
 
-3. Configure your database settings in `tenantsaas/tenantsaas/settings.py`. For a typical local setup you will need a database name, user and password with permissions to create schemas.
+3. Configure your environment variables. At minimum set your database credentials
+   (``POSTGRES_DB``, ``POSTGRES_USER`` and ``POSTGRES_PASSWORD``). You can also
+   customise ``DEBUG``, ``ALLOWED_HOSTS`` and ``CSRF_TRUSTED_ORIGINS`` to suit
+   your deployment. See ``tenantsaas/tenantsaas/settings.py`` for all supported
+   options.
 
 ## Running the application
 
