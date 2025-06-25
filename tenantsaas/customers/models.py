@@ -7,5 +7,9 @@ class Tenant(TenantMixin):
     class Meta:
         app_label = 'customers'
 
+    def __str__(self):
+        return self.name
+
 class Domain(DomainMixin):
-    pass
+    def __str__(self):
+        return self.domain
