@@ -1,47 +1,45 @@
 from pathlib import Path
 import os
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-rag+joyrb9yir*@l@i5e$bao8wb!&66_04%2)oh1i40j5*6h)a')
-
-# SECURITY WARNING: don't run with debug turned on in production!
-# Reads DEBUG from the environment, defaulting to True for development.
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-key')
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-# Allow configuring allowed hosts via a comma separated environment variable.
 _hosts = os.environ.get('ALLOWED_HOSTS')
 if _hosts:
     ALLOWED_HOSTS = [h.strip() for h in _hosts.split(',') if h.strip()]
 else:
     ALLOWED_HOSTS = []
 
-# Optionally specify trusted origins for CSRF using a comma separated list.
 CSRF_TRUSTED_ORIGINS = [
     o.strip()
     for o in os.environ.get('CSRF_TRUSTED_ORIGINS', '').split(',')
     if o.strip()
 ]
 
-
-# Application definition
-
-INSTALLED_APPS = [
+SHARED_APPS = [
     'django_tenants',
     'customers',
-    'django.contrib.admin',
-    'django.contrib.auth',
+    'shared',
     'django.contrib.contenttypes',
+    'django.contrib.auth',
+    'django.contrib.sessions',
+    'django.contrib.admin',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+]
+
+TENANT_APPS = [
+    'core',
+    'django.contrib.contenttypes',
+    'django.contrib.auth',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
 ]
+
+INSTALLED_APPS = SHARED_APPS + [app for app in TENANT_APPS if app not in SHARED_APPS]
 
 MIDDLEWARE = [
     'django_tenants.middleware.main.TenantMainMiddleware',
@@ -54,7 +52,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'tenantsaas.urls'
+ROOT_URLCONF = 'saasapp.urls'
 
 TEMPLATES = [
     {
@@ -71,67 +69,34 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'tenantsaas.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
+WSGI_APPLICATION = 'saasapp.wsgi.application'
 
 DATABASES = {
     'default': {
         'ENGINE': 'django_tenants.postgresql_backend',
-        'NAME': os.environ.get('POSTGRES_DB', 'tenantsaas'),
-        'USER': os.environ.get('POSTGRES_USER', 'tenantsaas'),
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'tenantsaas'),
+        'NAME': os.environ.get('POSTGRES_DB', 'saasapp'),
+        'USER': os.environ.get('POSTGRES_USER', 'saasapp'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'saasapp'),
         'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
         'PORT': os.environ.get('POSTGRES_PORT', '5432'),
     }
 }
 
-
-# Password validation
-# https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-
-# Internationalization
-# https://docs.djangoproject.com/en/5.2/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.2/howto/static-files/
-
 STATIC_URL = 'static/'
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 TENANT_MODEL = 'customers.Tenant'
 TENANT_DOMAIN_MODEL = 'customers.Domain'
-DATABASE_ROUTERS = (
-    'django_tenants.routers.TenantSyncRouter',
-)
+DATABASE_ROUTERS = ['django_tenants.routers.TenantSyncRouter']
