@@ -2,8 +2,11 @@ import json
 from django.http import JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth import login
+from django.shortcuts import render, redirect
+
 from .models import Tenant, Domain, CustomerRequest
-from django.contrib.auth import get_user_model
+from .forms import CustomerSignupForm
 
 
 def is_core(user):
@@ -69,3 +72,29 @@ def pending_requests(request):
         for r in reqs
     ]
     return JsonResponse({"requests": data})
+
+
+def signup(request):
+    """Allow a new user to sign up and request a customer tenant."""
+    if request.method == "POST":
+        form = CustomerSignupForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            name = form.cleaned_data["name"]
+            domain = form.cleaned_data["domain"]
+            schema_name = (
+                form.cleaned_data.get("schema_name")
+                or name.lower().replace(" ", "_")
+            )
+            CustomerRequest.objects.create(
+                user=user,
+                name=name,
+                domain=domain,
+                schema_name=schema_name,
+            )
+            login(request, user)
+            return redirect("home")
+    else:
+        form = CustomerSignupForm()
+
+    return render(request, "registration/signup.html", {"form": form})
