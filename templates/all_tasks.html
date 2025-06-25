@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>All Tasks</h2>
+<ul>
+{% for rec in records %}
+    <li>{{ rec.tenant.schema_name }} - {{ rec.task.name }} ({{ rec.task.service.name }}) {% if rec.task.completed %}(done){% endif %}</li>
+{% empty %}
+    <li>No tasks.</li>
+{% endfor %}
+</ul>
+{% endblock %}

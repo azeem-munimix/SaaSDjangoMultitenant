@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>All Services</h2>
+<ul>
+{% for rec in records %}
+    <li>{{ rec.tenant.schema_name }} - {{ rec.service.name }}</li>
+{% empty %}
+    <li>No services.</li>
+{% endfor %}
+</ul>
+{% endblock %}
