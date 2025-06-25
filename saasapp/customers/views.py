@@ -1,9 +1,31 @@
 import json
-from django.http import JsonResponse, HttpResponseBadRequest
+from django.http import JsonResponse, HttpResponseBadRequest, HttpResponseForbidden
 from django.views.decorators.csrf import csrf_exempt
-from .models import Tenant, Domain
+from django.contrib.auth.decorators import login_required, user_passes_test
+from .models import Tenant, Domain, CustomerRequest
+from django.contrib.auth import get_user_model
+
+
+def is_core(user):
+    return getattr(user, "is_core", False) or user.is_superuser
+
+
+@user_passes_test(is_core)
+def approve_customer(request, pk):
+    try:
+        req = CustomerRequest.objects.get(pk=pk, approved=False)
+    except CustomerRequest.DoesNotExist:
+        return HttpResponseBadRequest("invalid request")
+
+    tenant = Tenant(schema_name=req.schema_name, name=req.name)
+    tenant.save()
+    Domain.objects.create(domain=req.domain, tenant=tenant, is_primary=True)
+    req.approved = True
+    req.save()
+    return JsonResponse({"status": "approved", "tenant": tenant.schema_name})
 
 @csrf_exempt
+@login_required
 def create_customer(request):
     if request.method != "POST":
         return HttpResponseBadRequest("Only POST allowed")
@@ -20,9 +42,30 @@ def create_customer(request):
     if not name or not domain or not schema_name:
         return HttpResponseBadRequest("name, domain and schema_name required")
 
-    tenant = Tenant(schema_name=schema_name, name=name)
-    tenant.save()  # creates the schema when auto_create_schema = True
+    CustomerRequest.objects.create(
+        user=request.user,
+        name=name,
+        domain=domain,
+        schema_name=schema_name,
+    )
 
-    Domain.objects.create(domain=domain, tenant=tenant, is_primary=True)
+    return JsonResponse({"status": "pending"})
 
-    return JsonResponse({"id": tenant.id, "schema_name": tenant.schema_name, "domain": domain})
+
+@user_passes_test(is_core)
+def list_tenants(request):
+    tenants = Tenant.objects.all().select_related(None)
+    data = [
+        {"id": t.id, "schema_name": t.schema_name, "name": t.name} for t in tenants
+    ]
+    return JsonResponse({"tenants": data})
+
+
+@user_passes_test(is_core)
+def pending_requests(request):
+    reqs = CustomerRequest.objects.filter(approved=False)
+    data = [
+        {"id": r.id, "name": r.name, "domain": r.domain, "schema_name": r.schema_name, "user": r.user.username}
+        for r in reqs
+    ]
+    return JsonResponse({"requests": data})

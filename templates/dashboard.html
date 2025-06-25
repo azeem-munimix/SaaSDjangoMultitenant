@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Dashboard</h2>
+<h3>Pending Requests</h3>
+<ul>
+{% for r in requests %}
+    <li>{{ r.name }} - <a href="/approve/{{ r.id }}/">approve</a></li>
+{% empty %}
+    <li>No pending requests.</li>
+{% endfor %}
+</ul>
+<h3>Tenants</h3>
+<ul>
+{% for t in tenants %}
+    <li>{{ t.name }} ({{ t.domain_url }})</li>
+{% endfor %}
+</ul>
+{% endblock %}

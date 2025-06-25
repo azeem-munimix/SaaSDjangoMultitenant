@@ -57,7 +57,7 @@ ROOT_URLCONF = 'saasapp.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -100,3 +100,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 TENANT_MODEL = 'customers.Tenant'
 TENANT_DOMAIN_MODEL = 'customers.Domain'
 DATABASE_ROUTERS = ['django_tenants.routers.TenantSyncRouter']
+
+AUTH_USER_MODEL = 'shared.CoreUser'
+LOGIN_REDIRECT_URL = '/'
