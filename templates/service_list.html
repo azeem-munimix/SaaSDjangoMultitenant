@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Services</h2>
+<a href="{% url 'service_create' %}">Add Service</a>
+<ul>
+{% for s in services %}
+    <li>{{ s.name }} - {{ s.description }}</li>
+{% empty %}
+    <li>No services.</li>
+{% endfor %}
+</ul>
+{% endblock %}
