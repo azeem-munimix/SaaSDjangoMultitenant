@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 <h2>Assign FOIA {{ foia.pk }}</h2>
-<form method="post">
+<form method="post" class="mb-3">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">Assign</button>

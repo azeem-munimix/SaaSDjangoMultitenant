@@ -29,6 +29,9 @@
                 {% else %}
                     <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'signup' %}">Sign Up</a></li>
+                    {% if request.tenant and request.tenant.schema_name != 'public' %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'resident_signup' %}">Resident Sign Up</a></li>
+                    {% endif %}
                 {% endif %}
                 </ul>
             </div>
