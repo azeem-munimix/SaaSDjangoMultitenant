@@ -2,11 +2,14 @@
 {% block content %}
 <h2>Services</h2>
 <a href="{% url 'service_create' %}">Add Service</a>
-<ul>
+<div class="services">
 {% for s in services %}
-    <li>{{ s.name }} - {{ s.description }}</li>
+    <div class="service-box">
+        <h3>{{ s.name }}</h3>
+        <p>{{ s.description }}</p>
+    </div>
 {% empty %}
-    <li>No services.</li>
+    <p>No services.</p>
 {% endfor %}
-</ul>
+</div>
 {% endblock %}

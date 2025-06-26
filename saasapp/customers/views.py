@@ -82,6 +82,8 @@ def pending_requests(request):
 
 def signup(request):
     """Allow a new user to sign up and request a customer tenant."""
+    if getattr(request, "tenant", None) and request.tenant.schema_name != "public":
+        return HttpResponseForbidden("Sign up only allowed on public site")
     if request.method == "POST":
         form = CustomerSignupForm(request.POST)
         if form.is_valid():
