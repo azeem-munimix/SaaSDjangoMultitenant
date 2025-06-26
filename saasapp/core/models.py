@@ -53,11 +53,16 @@ class Membership(models.Model):
     """Links a user to a tenant with a role."""
 
     ADMIN = "admin"
-    STAFF = "staff"
+    MEMBER = "member"
+    APPROVER = "approver"
+    PUBLISHER = "publisher"
     RESIDENT = "resident"
+
     ROLE_CHOICES = [
         (ADMIN, "Admin"),
-        (STAFF, "Staff"),
+        (MEMBER, "Member"),
+        (APPROVER, "Approver"),
+        (PUBLISHER, "Publisher"),
         (RESIDENT, "Resident"),
     ]
 

@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 
 class CustomerSignupForm(UserCreationForm):
     name = forms.CharField(max_length=100)
-    domain = forms.CharField(max_length=255)
+    domain = forms.CharField(max_length=255, required=False)
     schema_name = forms.CharField(max_length=63, required=False)
 
     class Meta(UserCreationForm.Meta):
