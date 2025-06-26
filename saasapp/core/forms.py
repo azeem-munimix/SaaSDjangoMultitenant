@@ -1,4 +1,6 @@
 from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import get_user_model
 from .models import Service, Task, Client, FoiaRequest, Membership
 
 
@@ -35,3 +37,11 @@ class FoiaAssignForm(forms.Form):
         self.fields["assignee"].queryset = Membership.objects.filter(
             tenant=tenant, role=Membership.MEMBER
         ).select_related("user")
+
+
+class ResidentSignupForm(UserCreationForm):
+    """Sign up form for residents within a tenant."""
+
+    class Meta(UserCreationForm.Meta):
+        model = get_user_model()
+        fields = UserCreationForm.Meta.fields

@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 {% block content %}
-<h2>New FOIA Request</h2>
-<form method="post" class="mb-3">
+<h2>Resident Sign Up</h2>
+<form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Submit</button>
+    <button type="submit">Sign Up</button>
 </form>
 {% endblock %}

@@ -1,11 +1,19 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth import login
 from django.http import HttpResponseForbidden, HttpResponseBadRequest
 from customers.models import Tenant, CustomerRequest
 from django_tenants.utils import tenant_context
 
 from .models import Service, Task, Customer, Client, FoiaRequest, Membership
-from .forms import ServiceForm, TaskForm, ClientForm, FoiaRequestForm, FoiaAssignForm
+from .forms import (
+    ServiceForm,
+    TaskForm,
+    ClientForm,
+    FoiaRequestForm,
+    FoiaAssignForm,
+    ResidentSignupForm,
+)
 
 
 @login_required
@@ -186,3 +194,20 @@ def foia_request_assign(request, pk):
         "foia_assign_form.html",
         {"form": form, "foia": foia},
     )
+
+
+def resident_signup(request):
+    """Allow a new user to sign up as a resident on the current tenant."""
+    tenant = getattr(request, "tenant", None)
+    if not tenant or tenant.schema_name == "public":
+        return HttpResponseForbidden("Resident signup only allowed on tenant site")
+    if request.method == "POST":
+        form = ResidentSignupForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            Membership.objects.create(user=user, tenant=tenant, role=Membership.RESIDENT)
+            login(request, user)
+            return redirect("home")
+    else:
+        form = ResidentSignupForm()
+    return render(request, "registration/resident_signup.html", {"form": form})

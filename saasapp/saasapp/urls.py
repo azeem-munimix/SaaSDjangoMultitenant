@@ -2,7 +2,23 @@ from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from customers.views import create_customer, approve_customer, list_tenants, pending_requests, signup
-from core.views import home, dashboard, service_list, service_create, task_list, task_create, all_services, all_tasks, client_list, client_create, foia_request_create, foia_request_list, foia_request_accept, foia_request_assign
+from core.views import (
+    home,
+    dashboard,
+    service_list,
+    service_create,
+    task_list,
+    task_create,
+    all_services,
+    all_tasks,
+    client_list,
+    client_create,
+    foia_request_create,
+    foia_request_list,
+    foia_request_accept,
+    foia_request_assign,
+    resident_signup,
+)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -22,6 +38,7 @@ urlpatterns = [
     path('foia/', foia_request_list, name='foia_list'),
     path('foia/<int:pk>/accept/', foia_request_accept, name='foia_accept'),
     path('foia/<int:pk>/assign/', foia_request_assign, name='foia_assign'),
+    path('resident_signup/', resident_signup, name='resident_signup'),
     path('clients/', client_list, name='client_list'),
     path('clients/new/', client_create, name='client_create'),
     path('all_services/', all_services, name='all_services'),
