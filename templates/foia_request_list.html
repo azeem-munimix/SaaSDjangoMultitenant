@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>FOIA Requests</h2>
+<table>
+    <tr>
+        <th>ID</th><th>Resident</th><th>Accepted</th><th>Assigned To</th><th>Actions</th>
+    </tr>
+    {% for foia in foias %}
+    <tr>
+        <td>{{ foia.pk }}</td>
+        <td>{{ foia.resident.username }}</td>
+        <td>{{ foia.accepted }}</td>
+        <td>{{ foia.assigned_to.username|default:'-' }}</td>
+        <td>
+            {% if not foia.accepted %}
+                <a href="{% url 'foia_accept' foia.pk %}">Accept</a>
+            {% endif %}
+            <a href="{% url 'foia_assign' foia.pk %}">Assign</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

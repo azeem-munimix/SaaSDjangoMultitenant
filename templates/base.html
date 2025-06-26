@@ -15,7 +15,9 @@
             <a href="{% url 'home' %}">Home</a> |
             <a href="{% url 'service_list' %}">Services</a> |
             <a href="{% url 'task_list' %}">Tasks</a> |
-            <a href="{% url 'client_list' %}">Clients</a>
+            <a href="{% url 'client_list' %}">Clients</a> |
+            <a href="{% url 'foia_create' %}">New FOIA</a> |
+            <a href="{% url 'foia_list' %}">FOIA Requests</a>
             {% if user.is_core %}
                 | <a href="{% url 'all_services' %}">All Services</a>
                 | <a href="{% url 'all_tasks' %}">All Tasks</a>

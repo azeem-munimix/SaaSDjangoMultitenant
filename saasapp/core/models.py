@@ -47,3 +47,46 @@ class Task(models.Model):
 
     def __str__(self) -> str:  # pragma: no cover - simple string rep
         return self.name
+
+
+class Membership(models.Model):
+    """Links a user to a tenant with a role."""
+
+    ADMIN = "admin"
+    STAFF = "staff"
+    RESIDENT = "resident"
+    ROLE_CHOICES = [
+        (ADMIN, "Admin"),
+        (STAFF, "Staff"),
+        (RESIDENT, "Resident"),
+    ]
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE)
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES)
+
+    class Meta:
+        unique_together = ["user", "tenant"]
+
+    def __str__(self) -> str:  # pragma: no cover - simple string rep
+        return f"{self.user.username} - {self.role}"
+
+
+class FoiaRequest(models.Model):
+    """Request created by a resident."""
+
+    description = models.TextField()
+    resident = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="foia_requests"
+    )
+    accepted = models.BooleanField(default=False)
+    assigned_to = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="assigned_foia_requests",
+    )
+
+    def __str__(self) -> str:  # pragma: no cover - simple string rep
+        return f"FOIA #{self.pk}"

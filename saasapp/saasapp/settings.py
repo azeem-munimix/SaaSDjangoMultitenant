@@ -104,3 +104,4 @@ DATABASE_ROUTERS = ['django_tenants.routers.TenantSyncRouter']
 
 AUTH_USER_MODEL = 'shared.CoreUser'
 LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
