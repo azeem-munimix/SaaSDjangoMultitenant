@@ -18,13 +18,13 @@ from core.views import (
     foia_request_accept,
     foia_request_assign,
     resident_signup,
-    LogoutView,
+    logout,
 )
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
-    path('logout/', LogoutView.as_view(next_page='/'), name='logout'),
+    path('logout/', logout, name='logout'),
     path('api/create_customer/', create_customer, name='create_customer'),
     path('approve/<int:pk>/', approve_customer, name='approve_customer'),
     path('api/tenants/', list_tenants, name='list_tenants'),

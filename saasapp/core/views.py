@@ -5,6 +5,7 @@ from django.contrib.auth.views import LogoutView as DjangoLogoutView
 from django.http import HttpResponseForbidden, HttpResponseBadRequest
 from customers.models import Tenant, CustomerRequest
 from django_tenants.utils import tenant_context
+from django.contrib.auth import logout
 
 from .models import Service, Task, Customer, Client, FoiaRequest, Membership
 from .forms import (
@@ -41,10 +42,8 @@ def is_resident(user, tenant):
     return Membership.objects.filter(user=user, tenant=tenant, role=Membership.RESIDENT).exists()
 
 
-class LogoutView(DjangoLogoutView):
-    """Require POST requests to log out."""
-
-    http_method_names = ["post"]
+def logout(request):
+    logout(request)
 
 
 @user_passes_test(is_core)
