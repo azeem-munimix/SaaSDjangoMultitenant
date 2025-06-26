@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import login
 from django.shortcuts import render, redirect
 
+from django_tenants.utils import schema_context
 from .models import Tenant, Domain, CustomerRequest
 from .forms import CustomerSignupForm
 
@@ -20,9 +21,10 @@ def approve_customer(request, pk):
     except CustomerRequest.DoesNotExist:
         return HttpResponseBadRequest("invalid request")
 
-    tenant = Tenant(schema_name=req.schema_name, name=req.name)
-    tenant.save()
-    Domain.objects.create(domain=req.domain, tenant=tenant, is_primary=True)
+    with schema_context('public'):
+        tenant = Tenant(schema_name=req.schema_name, name=req.name)
+        tenant.save()
+        Domain.objects.create(domain=req.domain, tenant=tenant, is_primary=True)
     req.approved = True
     req.save()
     return JsonResponse({"status": "approved", "tenant": tenant.schema_name})
