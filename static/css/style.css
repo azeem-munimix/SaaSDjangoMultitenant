@@ -8,6 +8,9 @@ nav {
     padding: 10px;
     border-radius: 4px;
 }
+h1 {
+    margin-top: 0;
+}
 h1, h2, h3 {
     color: #333;
 }
