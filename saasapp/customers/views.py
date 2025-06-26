@@ -7,7 +7,7 @@ from django.shortcuts import render, redirect
 
 from django_tenants.utils import schema_context, tenant_context
 from .models import Tenant, Domain, CustomerRequest
-from core.models import Customer
+from core.models import Customer, Membership
 from .forms import CustomerSignupForm
 
 
@@ -29,6 +29,7 @@ def approve_customer(request, pk):
 
     with tenant_context(tenant):
         Customer.objects.create(tenant=tenant, name=req.name, owner=req.user)
+        Membership.objects.create(user=req.user, tenant=tenant, role=Membership.ADMIN)
     req.approved = True
     req.save()
     return JsonResponse({"status": "approved", "tenant": tenant.schema_name})
