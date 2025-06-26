@@ -23,7 +23,12 @@
                         <li><a href="{% url 'all_tasks' %}">All Tasks</a></li>
                         <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
                     {% endif %}
-                    <li><a href="{% url 'logout' %}">Logout</a></li>
+                    <li>
+                        <form action="{% url 'logout' %}" method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="link-button">Logout</button>
+                        </form>
+                    </li>
                 {% else %}
                     <li><a href="{% url 'login' %}">Login</a></li>
                     <li><a href="{% url 'signup' %}">Sign Up</a></li>

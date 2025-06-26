@@ -42,9 +42,9 @@ def is_resident(user, tenant):
 
 
 class LogoutView(DjangoLogoutView):
-    """Allow logging out via GET requests."""
+    """Require POST requests to log out."""
 
-    http_method_names = ["get"]
+    http_method_names = ["post"]
 
 
 @user_passes_test(is_core)
