@@ -3,14 +3,20 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from customers.models import Tenant, CustomerRequest
 from django_tenants.utils import tenant_context
 
-from .models import Service, Task
+from .models import Service, Task, Customer
 from .forms import ServiceForm, TaskForm
 
 
 @login_required
 def home(request):
     tenant = getattr(request, "tenant", None)
-    return render(request, "home.html", {"tenant": tenant})
+    customer = None
+    if tenant:
+        try:
+            customer = Customer.objects.select_related("owner").get()
+        except Customer.DoesNotExist:
+            customer = None
+    return render(request, "home.html", {"tenant": tenant, "customer": customer})
 
 
 def is_core(user):

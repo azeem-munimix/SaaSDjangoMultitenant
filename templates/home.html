@@ -2,4 +2,7 @@
 {% block content %}
 <h2>Welcome</h2>
 <p>Your tenant: {{ tenant }}</p>
+{% if customer %}
+<p>Customer: {{ customer.name }} (owner: {{ customer.owner.username }})</p>
+{% endif %}
 {% endblock %}
