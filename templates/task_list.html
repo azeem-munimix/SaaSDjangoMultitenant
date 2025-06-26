@@ -2,11 +2,16 @@
 {% block content %}
 <h2>Tasks</h2>
 <a href="{% url 'task_create' %}">Add Task</a>
-<ul>
+<table class="table">
+    <tr><th>Name</th><th>Service</th><th>Status</th></tr>
 {% for t in tasks %}
-    <li>{{ t.name }} ({{ t.service.name }}) {% if t.completed %}(done){% endif %}</li>
+    <tr>
+        <td>{{ t.name }}</td>
+        <td>{{ t.service.name }}</td>
+        <td>{% if t.completed %}done{% else %}pending{% endif %}</td>
+    </tr>
 {% empty %}
-    <li>No tasks.</li>
+    <tr><td colspan="3">No tasks.</td></tr>
 {% endfor %}
-</ul>
+</table>
 {% endblock %}

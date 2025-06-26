@@ -3,8 +3,8 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from customers.models import Tenant, CustomerRequest
 from django_tenants.utils import tenant_context
 
-from .models import Service, Task, Customer
-from .forms import ServiceForm, TaskForm
+from .models import Service, Task, Customer, Client
+from .forms import ServiceForm, TaskForm, ClientForm
 
 
 @login_required
@@ -50,7 +50,11 @@ def service_create(request):
 
 @login_required
 def task_list(request):
-    tasks = Task.objects.select_related("service").all()
+    tasks = Task.objects.select_related("service")
+    if getattr(request, "tenant", None) and request.tenant.schema_name == "public":
+        tasks = tasks.filter(user=request.user)
+    else:
+        tasks = tasks.all()
     return render(request, "task_list.html", {"tasks": tasks})
 
 
@@ -59,11 +63,31 @@ def task_create(request):
     if request.method == "POST":
         form = TaskForm(request.POST)
         if form.is_valid():
-            form.save()
+            task = form.save(commit=False)
+            task.user = request.user
+            task.save()
             return redirect("task_list")
     else:
         form = TaskForm()
     return render(request, "task_form.html", {"form": form})
+
+
+@login_required
+def client_list(request):
+    clients = Client.objects.all()
+    return render(request, "client_list.html", {"clients": clients})
+
+
+@login_required
+def client_create(request):
+    if request.method == "POST":
+        form = ClientForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("client_list")
+    else:
+        form = ClientForm()
+    return render(request, "client_form.html", {"form": form})
 
 
 @user_passes_test(is_core)

@@ -29,9 +29,20 @@ class Service(models.Model):
         return self.name
 
 
+class Client(models.Model):
+    """Simple client record stored per tenant."""
+
+    name = models.CharField(max_length=100)
+    email = models.EmailField(blank=True)
+
+    def __str__(self) -> str:  # pragma: no cover - simple string rep
+        return self.name
+
+
 class Task(models.Model):
     name = models.CharField(max_length=100)
     service = models.ForeignKey(Service, on_delete=models.CASCADE, related_name="tasks")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     completed = models.BooleanField(default=False)
 
     def __str__(self) -> str:  # pragma: no cover - simple string rep

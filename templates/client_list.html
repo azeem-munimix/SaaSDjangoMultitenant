@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Clients</h2>
+<a href="{% url 'client_create' %}">Add Client</a>
+<table class="table">
+    <tr><th>Name</th><th>Email</th></tr>
+    {% for c in clients %}
+        <tr><td>{{ c.name }}</td><td>{{ c.email }}</td></tr>
+    {% empty %}
+        <tr><td colspan="2">No clients.</td></tr>
+    {% endfor %}
+</table>
+{% endblock %}
