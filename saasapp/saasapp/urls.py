@@ -1,11 +1,13 @@
 from django.contrib import admin
 from django.urls import path, include
+from django.contrib.auth import views as auth_views
 from customers.views import create_customer, approve_customer, list_tenants, pending_requests, signup
 from core.views import home, dashboard, service_list, service_create, task_list, task_create, all_services, all_tasks, client_list, client_create, foia_request_create, foia_request_list, foia_request_accept, foia_request_assign
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
+    path('logout/', auth_views.LogoutView.as_view(next_page='/'), name='logout'),
     path('api/create_customer/', create_customer, name='create_customer'),
     path('approve/<int:pk>/', approve_customer, name='approve_customer'),
     path('api/tenants/', list_tenants, name='list_tenants'),
