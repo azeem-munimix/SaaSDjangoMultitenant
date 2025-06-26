@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import login
+from django.contrib.auth.views import LogoutView as DjangoLogoutView
 from django.http import HttpResponseForbidden, HttpResponseBadRequest
 from customers.models import Tenant, CustomerRequest
 from django_tenants.utils import tenant_context
@@ -38,6 +39,12 @@ def is_admin(user, tenant):
 
 def is_resident(user, tenant):
     return Membership.objects.filter(user=user, tenant=tenant, role=Membership.RESIDENT).exists()
+
+
+class LogoutView(DjangoLogoutView):
+    """Allow logging out via GET requests."""
+
+    http_method_names = ["get"]
 
 
 @user_passes_test(is_core)
