@@ -75,8 +75,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django_tenants.postgresql_backend',
         'NAME': os.environ.get('POSTGRES_DB', 'saasapp'),
-        'USER': os.environ.get('POSTGRES_USER', 'saasapp'),
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'saasapp'),
+        'USER': os.environ.get('POSTGRES_USER', 'postgres'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'admin'),
         'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
         'PORT': os.environ.get('POSTGRES_PORT', '5432'),
     }
