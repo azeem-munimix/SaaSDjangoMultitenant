@@ -33,5 +33,5 @@ class FoiaAssignForm(forms.Form):
         tenant = kwargs.pop("tenant")
         super().__init__(*args, **kwargs)
         self.fields["assignee"].queryset = Membership.objects.filter(
-            tenant=tenant, role=Membership.STAFF
+            tenant=tenant, role=Membership.MEMBER
         ).select_related("user")

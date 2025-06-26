@@ -12,7 +12,7 @@
 <h3>Tenants</h3>
 <ul>
 {% for t in tenants %}
-    <li>{{ t.name }} ({{ t.domain_url }})</li>
+    <li>{{ t.name }} ({{ t.domains.first.domain }})</li>
 {% endfor %}
 </ul>
 {% endblock %}

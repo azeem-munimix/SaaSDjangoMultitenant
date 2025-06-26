@@ -22,10 +22,11 @@ def approve_customer(request, pk):
     except CustomerRequest.DoesNotExist:
         return HttpResponseBadRequest("invalid request")
 
-    with schema_context('public'):
+    with schema_context("public"):
         tenant = Tenant(schema_name=req.schema_name, name=req.name)
         tenant.save()
-        Domain.objects.create(domain=req.domain, tenant=tenant, is_primary=True)
+        domain = req.domain or f"{req.schema_name}.localhost"
+        Domain.objects.create(domain=domain, tenant=tenant, is_primary=True)
 
     with tenant_context(tenant):
         Customer.objects.create(tenant=tenant, name=req.name, owner=req.user)
@@ -33,6 +34,7 @@ def approve_customer(request, pk):
     req.approved = True
     req.save()
     return JsonResponse({"status": "approved", "tenant": tenant.schema_name})
+
 
 @csrf_exempt
 @login_required
@@ -46,11 +48,13 @@ def create_customer(request):
         return HttpResponseBadRequest("Invalid JSON")
 
     name = data.get("name")
-    domain = data.get("domain")
-    schema_name = data.get("schema_name") or (name.lower().replace(" ", "_") if name else None)
+    schema_name = data.get("schema_name") or (
+        name.lower().replace(" ", "_") if name else None
+    )
+    domain = data.get("domain") or (schema_name + ".localhost" if schema_name else None)
 
-    if not name or not domain or not schema_name:
-        return HttpResponseBadRequest("name, domain and schema_name required")
+    if not name or not schema_name:
+        return HttpResponseBadRequest("name and schema_name required")
 
     CustomerRequest.objects.create(
         user=request.user,
@@ -65,9 +69,7 @@ def create_customer(request):
 @user_passes_test(is_core)
 def list_tenants(request):
     tenants = Tenant.objects.all().select_related(None)
-    data = [
-        {"id": t.id, "schema_name": t.schema_name, "name": t.name} for t in tenants
-    ]
+    data = [{"id": t.id, "schema_name": t.schema_name, "name": t.name} for t in tenants]
     return JsonResponse({"tenants": data})
 
 
@@ -75,7 +77,13 @@ def list_tenants(request):
 def pending_requests(request):
     reqs = CustomerRequest.objects.filter(approved=False)
     data = [
-        {"id": r.id, "name": r.name, "domain": r.domain, "schema_name": r.schema_name, "user": r.user.username}
+        {
+            "id": r.id,
+            "name": r.name,
+            "domain": r.domain,
+            "schema_name": r.schema_name,
+            "user": r.user.username,
+        }
         for r in reqs
     ]
     return JsonResponse({"requests": data})
@@ -90,11 +98,10 @@ def signup(request):
         if form.is_valid():
             user = form.save()
             name = form.cleaned_data["name"]
-            domain = form.cleaned_data["domain"]
-            schema_name = (
-                form.cleaned_data.get("schema_name")
-                or name.lower().replace(" ", "_")
+            schema_name = form.cleaned_data.get("schema_name") or name.lower().replace(
+                " ", "_"
             )
+            domain = form.cleaned_data.get("domain") or f"{schema_name}.localhost"
             CustomerRequest.objects.create(
                 user=user,
                 name=name,
