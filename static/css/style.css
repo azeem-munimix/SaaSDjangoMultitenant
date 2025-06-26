@@ -94,3 +94,16 @@ input[type="submit"]:hover {
 form {
     margin-top: 10px;
 }
+
+.link-button {
+    background: none;
+    border: none;
+    padding: 0;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+}
+
+.link-button:hover {
+    text-decoration: underline;
+}
