@@ -1,8 +1,13 @@
 {% extends 'base.html' %}
 {% block content %}
-<h2>Welcome</h2>
-<p>Your tenant: {{ tenant }}</p>
-{% if customer %}
-<p>Customer: {{ customer.name }} (owner: {{ customer.owner.username }})</p>
-{% endif %}
+<div class="hero">
+    <h1>Django SaaS</h1>
+    <p>Your tenant: {{ tenant }}</p>
+    {% if customer %}
+    <p>Customer: {{ customer.name }} (owner: {{ customer.owner.username }})</p>
+    {% endif %}
+    {% if not user.is_authenticated %}
+    <a href="{% url 'signup' %}" class="btn-primary">Get Started</a>
+    {% endif %}
+</div>
 {% endblock %}
