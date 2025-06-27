@@ -5,7 +5,7 @@ from django.contrib.auth.views import LogoutView as DjangoLogoutView
 from django.http import HttpResponseForbidden, HttpResponseBadRequest
 from customers.models import Tenant, CustomerRequest
 from django_tenants.utils import tenant_context
-from django.contrib.auth import logout
+from django.contrib.auth import logout as auth_logout
 
 from .models import Service, Task, Customer, Client, FoiaRequest, Membership
 from .forms import (
@@ -43,7 +43,8 @@ def is_resident(user, tenant):
 
 
 def logout(request):
-    logout(request)
+    auth_logout(request)
+    return redirect("home")
 
 
 @user_passes_test(is_core)
