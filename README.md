@@ -8,7 +8,9 @@ See `saasapp/README.md` for details.
 Build and run the stack using docker compose:
 
 ```bash
-docker-compose up --build
+docker compose build
+docker compose up -d
+docker compose logs -f -t
 ```
 
 The application will be available on `http://localhost` and will read
